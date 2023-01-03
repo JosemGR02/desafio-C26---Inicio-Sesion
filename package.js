@@ -1,0 +1,15 @@
+
+
+import { config } from "process";
+
+
+
+// config
+
+// PASSPORT: {
+//     GITHUB: {
+//         GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+//         GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+//         GITHUB_CLIENT_CALLBACK_URL: process.env.GITHUB_CLIENT_CALLBACK_URL
+//     }
+// }
