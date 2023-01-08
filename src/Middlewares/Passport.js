@@ -16,33 +16,43 @@ const iniciar = () => {
     passport.deserializeUser(async (id, done) => {
         const usuario = await DaoUsuario.obtenerXid(id);
         done(null, usuario);
-    }),
+    });
 
-        // Estrategia Local
-        passport.use("inicioSesion", new LocalStrategy({
-            usernameField: 'email',
-            passwordField: 'contraseña',
-            passReqToCallback: true,
-        }, async (solicitud, email, contraseña, done) => {
-            try {
-                DaoUsuario.obtenerUno({ email }, (error, usuario) => {
+    // Estrategias Locales
 
-                    if (error) return done(null, false)
-                    if (!usuario) {
-                        console.log({ error: ERRORES_UTILS.MESSAGES.ERROR_USUARIO_O_CONTRA });
-                        return done(null, false)
-                    }
-                    if (!BCRYPT_VALIDADOR.validarContraseña(usuario, contraseña)) {
-                        console.log({ error: ERRORES_UTILS.MESSAGES.ERROR_USUARIO_O_CONTRA });
-                        return done(null, false)
-                    }
-                    return done(null, usuario)
-                })
-            } catch (error) {
-                console.log(`${error}, Error en Passport - inicio Sesion`);
-            }
-        }))
+    // Estrategia Inicio sesion
+    passport.use("inicioSesion", new LocalStrategy({
+        usernameField: 'email',
+        passwordField: 'contraseña',
+        passReqToCallback: true,
+    }, async (solicitud, email, contraseña, done) => {
+        try {
+            if (!email || !contraseña) return respuesta.send({ success: false })
 
+            DaoUsuario.obtenerUno({ email }, (error, usuario) => {
+                if (error) return done(null, false)
+
+                if (!usuario) {
+                    console.log({ error: ERRORES_UTILS.MESSAGES.ERROR_USUARIO_O_CONTRA });
+                    return done(null, false)
+                }
+                if (!BCRYPT_VALIDADOR.validarContraseña(usuario, contraseña)) {
+                    console.log({ error: ERRORES_UTILS.MESSAGES.ERROR_USUARIO_O_CONTRA });
+                    return done(null, false)
+                }
+
+                const respuestaUsuario = {
+                    id: usuario._id,
+                    email: usuario.email
+                }
+                return done(null, respuestaUsuario)
+            })
+        } catch (error) {
+            console.log(`${error}, Error en Passport - inicio Sesion`);
+        }
+    }))
+
+    // Estrategia Registrarse
     passport.use("registrarse", new LocalStrategy({
         usernameField: 'email',
         passwordField: 'contraseña',

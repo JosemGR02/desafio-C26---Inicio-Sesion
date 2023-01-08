@@ -7,8 +7,6 @@ const init = async () => {
     try {
         mongoose.connect(config.DATABASES.mongo.url, {
             dbName: config.DATABASES.mongo.dbName,
-            user: config.DATABASES.mongo.user,
-            pass: config.DATABASES.mongo.pass,
         });
         console.log("La conexión con MongoBD establecida con exito");
 

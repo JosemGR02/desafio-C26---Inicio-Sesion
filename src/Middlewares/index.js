@@ -5,5 +5,5 @@ export { verificarAdmin } from "./VerificarAdmin.js";
 
 export { PassportAutenticacion } from "./Passport.js";
 
-export { estaAutenticado } from "./estaAutenticado.js";
+export { estaAutenticado } from "./autenticacion.js";
 

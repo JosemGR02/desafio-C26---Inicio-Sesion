@@ -18,35 +18,37 @@ ruta.get("/login", estaAutenticado, (solicitud, respuesta) => {
 
 ruta.post("/login", passport.authenticate("inicioSesion", { failureRedirect: "/errorlogin" }),
     (solicitud, respuesta) => {
-        respuesta.render("/");
+        res.redirect("/");
     }
 );
 
 // Registrarse
-ruta.get("/register", (solicitud, respuesta) => {
+ruta.get("/signup", (solicitud, respuesta) => {
     respuesta.render("register");
 });
 
-ruta.post("/register", passport.authenticate("registrarse", { failureRedirect: "/erroregister" }),
+ruta.post("/signup", passport.authenticate("registrarse", { failureRedirect: "/erroregister" }),
     (solicitud, respuesta) => {
-        respuesta.render("/");
+        res.redirect("/");
     }
 );
 
 // Cerrar Sesion
-ruta.post("/logout", (solicitud, respuesta) => {
+ruta.get("/logout", (solicitud, respuesta) => {
     const { email } = solicitud.usuario;
     solicitud.logout();
     respuesta.render("logout", { email });
 });
 
 // Rutas Errores
-ruta.get("/errorlogin", (solicitud, respuesta) => {
+ruta.get("/error-login", (solicitud, respuesta) => {
+    console.log("Error en login")
     respuesta.render("error-login", {});
 });
 
-ruta.get("/erroregister", (solicitud, respuesta) => {
-    respuesta.render("error-register", {});
+ruta.get("/error-signup", (solicitud, respuesta) => {
+    console.log("Error en signup")
+    respuesta.render("error-signup", {});
 });
 
 

@@ -6,6 +6,7 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import __dirname from "./dirname.js";
 import cookieParser from "cookie-parser";
+import passport from "passport";
 import { config } from './Configuracion/config.js';
 import { RutaCarrito, RutaProductosTest, RutaProducto } from "./Rutas/index.js";
 import { RutaMensajes, RutAutenticacion } from "./Rutas/index.js";
@@ -16,6 +17,19 @@ import { errorMiddleware } from './Middlewares/index.js';
 import { PassportAutenticacion } from './Middlewares/index.js';
 
 
+
+const app = express();
+
+// Passport
+PassportAutenticacion.iniciar()
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(cookieParser());
+
+
+const mongOptiones = { useNewUrlParser: true, useUnifiedTopology: true }
+
 // Sesion Mongo
 app.use(
     session({
@@ -24,11 +38,12 @@ app.use(
             dbName: process.env.BASEDATOS_MONGO_NOMBRE,
             mongOptiones,
             ttl: 600,
-            collectionName: 'sesionesMC'
+            collectionName: 'sesionesMC',
+            autoRemove: 'native'
         }),
         secret: "secret",
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
         rolling: false,
         cookie: {
             maxAge: 600000,
@@ -36,17 +51,9 @@ app.use(
     })
 );
 
-const app = express();
-
-// Passport
-PassportAutenticacion.iniciar()
-app.use(passport.session())
-
-app.use(cookieParser());
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('./public'))
+app.use(express.static('/public'))
 
 
 // Middleware del error
@@ -82,11 +89,8 @@ const io = new ServidorIO(servidorHttp);
 servidorHttp.listen(config.SERVER.PORT, async () => {
     console.log(`Servidor escuchando en el puerto: ${config.SERVER.PORT}`);// servidorHttp.address().port 
     try {
-        await mongoose.connect(process.env.BASEDATOS_MONGO_URL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log("Connected Mongo BD");
+        await mongoose.connect(process.env.BASEDATOS_MONGO_URL, mongOptiones);
+        console.log("Conectado a Base de Datos Mongo");
     } catch (error) {
         console.log(`Error en conexión de Base de datos: ${error}`);
     }
@@ -146,3 +150,11 @@ const nuevoProducto = async (socket, io, nuevoProd) => {
     const todosProds = await DaoProducto.obtenerTodos()
     io.sockets.emit('todos los productos', todosProds)
 }
+
+
+
+
+
+
+
+

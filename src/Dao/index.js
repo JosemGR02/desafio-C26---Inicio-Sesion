@@ -1,6 +1,6 @@
 
 import { config } from "../Configuracion/config.js";
-import { servicioMongoDB, conectar } from "../Servicios/index.js";
+import { servicioMongoDB } from "../Servicios/index.js";
 import { MensajesMongoBD, MensajesFilesystem, MensajesFirebase, MensajesMemoria, MensajesChat } from "./Mensajes/index.js";
 import { CarritosMongoBD, CarritosFilesystem, CarritosFirebase, CarritosMemoria } from "./Carritos/index.js";
 import { ProductosMongoBD, ProductosFileSystem, ProductosFirebase, ProductosMemoria } from "./Productos/index.js";
