@@ -14,18 +14,10 @@ import { DaoMensaje, DaoProducto } from "./Dao/index.js";
 import { Server as ServidorHttp } from "http";
 import { Server as ServidorIO } from "socket.io";
 import { errorMiddleware } from './Middlewares/index.js';
-import { PassportAutenticacion } from './Middlewares/index.js';
-
+import { PassportAutenticacion } from './Servicios/index.js';
 
 
 const app = express();
-
-// Passport
-PassportAutenticacion.iniciar()
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use(cookieParser());
 
 
 const mongOptiones = { useNewUrlParser: true, useUnifiedTopology: true }
@@ -51,6 +43,13 @@ app.use(
     })
 );
 
+// Passport
+PassportAutenticacion.iniciar()
+app.use(passport.session());
+// app.use(passport.initialize());
+
+app.use(cookieParser());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('/public'))
@@ -63,7 +62,9 @@ app.use(errorMiddleware);
 app.engine("hbs", handlebars.engine({ extname: ".hbs", defaultLayout: "main.hbs" }));
 
 app.set('view engine', 'hbs')
-app.set('views', __dirname + "/view");
+app.set('views', './public/Vistas');
+// app.set('views', __dirname + "/view");
+
 
 
 // dayjs

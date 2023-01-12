@@ -1,8 +1,8 @@
 
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { BCRYPT_VALIDADOR, ERRORES_UTILS } from '../Utilidades/index.js';
-import { DaoUsuario } from "../Dao/index.js";
+import { BCRYPT_VALIDADOR, ERRORES_UTILS } from '../../Utilidades/index.js';
+import { DaoUsuario } from "../../Dao/index.js";
 
 
 const iniciar = () => {
@@ -21,7 +21,7 @@ const iniciar = () => {
     // Estrategias Locales
 
     // Estrategia Inicio sesion
-    passport.use("inicioSesion", new LocalStrategy({
+    passport.use("login", new LocalStrategy({
         usernameField: 'email',
         passwordField: 'contraseña',
         passReqToCallback: true,
@@ -53,13 +53,14 @@ const iniciar = () => {
     }))
 
     // Estrategia Registrarse
-    passport.use("registrarse", new LocalStrategy({
+    passport.use("signup", new LocalStrategy({
         usernameField: 'email',
         passwordField: 'contraseña',
         passReqToCallback: true,
     }, async (solicitud, email, contraseña, done) => {
         try {
             if (!email || !contraseña) return respuesta.send({ success: false })
+            console.log(email, contraseña);
 
             const usuarioYaExiste = await DaoUsuario.obtenerUno({ email })
 
@@ -73,13 +74,14 @@ const iniciar = () => {
             }
 
             const nuevoUsuario = {
+                id: usuario._id,
                 email: solicitud.body.email,
                 contraseña: BCRYPT_VALIDADOR.crearContraHash(contraseña)
             }
-
+            console.log(nuevoUsuario);
             DaoUsuario.guardar(nuevoUsuario, (error, nuevoUsuario) => {
                 if (error) {
-                    console.log(` ${error}, Error al guardar el usuario`);
+                    console.log(`${error}, Error al guardar el usuario`);
                     return done(null, false)
                 }
 

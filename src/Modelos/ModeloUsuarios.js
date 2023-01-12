@@ -4,9 +4,14 @@ import { Schema } from "mongoose";
 const ColeccionUsuarios = "usuarios";
 
 const esquemaUsuario = new Schema({
-    email: String,
-    contraseña: String,
+    id: { type: Schema.Types.ObjectId, required: true },
+    email: { type: String, required: true, max: 30 },
+    contraseña: { type: String, required: true, max: 30 },
 });
+
+// const usuario.id = new mongoose.Types.ObjectId();
+
+// id: { type: String, required: true, max: 10 },
 
 esquemaUsuario.set("toJSON", {
     transform: (_, respuesta) => {

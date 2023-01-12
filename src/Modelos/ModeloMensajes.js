@@ -5,7 +5,7 @@ const ColeccionMensajes = "mensajes";
 
 const EsquemaMensajes = new Schema(
     {
-        id: { type: String, required: true, max: 10 },
+        id: { type: Schema.Types.ObjectId, required: true },
         texto: { type: String, required: true, max: 200 },
     }
 );
