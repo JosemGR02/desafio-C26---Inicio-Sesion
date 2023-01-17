@@ -27,9 +27,9 @@ const iniciar = () => {
         passReqToCallback: true,
     }, async (solicitud, email, contraseña, done) => {
         try {
-            if (!email || !contraseña) return respuesta.send({ success: false })
+            if (!email || !contraseña) return done(null, false)
 
-            DaoUsuario.obtenerUno({ email }, (error, usuario) => {
+            DaoUsuario.obtenerUno({ email: email }, (error, usuario) => {
                 if (error) return done(null, false)
 
                 if (!usuario) {
@@ -59,18 +59,21 @@ const iniciar = () => {
         passReqToCallback: true,
     }, async (solicitud, email, contraseña, done) => {
         try {
-            if (!email || !contraseña) return respuesta.send({ success: false })
+            if (!email || !contraseña) return done(null, false)
             console.log(email, contraseña);
 
-            const usuarioYaExiste = await DaoUsuario.obtenerUno({ email })
+            const usuarioYaExiste = await DaoUsuario.obtenerUno({ email: email }, (error, usuario) => {
+                if (error) return done(null, false)
+            })
 
             if (usuarioYaExiste && usuarioYaExiste.contraseña) {
-                return respuesta.send({ success: false, error: 'Error, el usuario ya esta registrado' })
+                console.log(`El usuario ingresado ya existe, su email es: ${usuarioYaExiste.email}`);
+                return done(null, false)
             }
             if (usuarioYaExiste && !usuarioYaExiste.contraseña) {
                 const usuarioActualizado = await DaoUsuario.actualizar(usuarioYaExiste._id, { ...usuarioYaExiste, contraseña })
                 console.log(`Usuario ${usuarioActualizado} ha sido actualizado correctamente`);
-                return respuesta.send({ success: true, usuarioActualizado })
+                return done(null, usuarioActualizado)
             }
 
             const nuevoUsuario = {
@@ -97,4 +100,3 @@ const iniciar = () => {
 export const PassportAutenticacion = {
     iniciar,
 }
-
