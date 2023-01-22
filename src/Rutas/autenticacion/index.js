@@ -24,7 +24,8 @@ ruta.post("/login", passport.authenticate("login", { failureRedirect: "/api/aute
 
 // Registrarse
 ruta.get("/signup", (solicitud, respuesta) => {
-    respuesta.render("view/home", { email: solicitud.respuestaUsuario });
+    const { email } = solicitud.body;
+    respuesta.render("view/home", { email });
 });
 
 ruta.post("/signup", passport.authenticate("signup", { failureRedirect: "/api/autenticacion/error-signup" }),
@@ -33,14 +34,24 @@ ruta.post("/signup", passport.authenticate("signup", { failureRedirect: "/api/au
     }
 );
 
+
 // Cerrar Sesion
 ruta.get("/logout", (solicitud, respuesta) => {
-    solicitud.logout();
-    respuesta.render("view/logout", { email: solicitud.respuestaUsuario });
+    try {
+        const { email } = solicitud.body;
+
+        solicitud.logout(error => {
+            if (error) {
+                respuesta.send(`${error}, Error al desloguearse`);
+            } else {
+                respuesta.render('view/logout', { email });
+            }
+        });
+    } catch (error) {
+        respuesta.send(`${error}, Error en el logout`);
+    }
 });
 
-// Deserializar
-// const usuario = await DaoUsuario.obtenerXid(id);
 
 // Rutas Errores
 ruta.get("/error-login", (solicitud, respuesta) => {

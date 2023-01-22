@@ -15,8 +15,8 @@ const iniciar = () => {
 
     // Deserializar
     passport.deserializeUser(async (id, done) => {
-        const respuestaUsuario = await DaoUsuario.obtenerXid(id);
-        done(null, respuestaUsuario);
+        const usuario = await DaoUsuario.obtenerXid(id);
+        done(null, usuario);
     });
 
     // Estrategias Locales
