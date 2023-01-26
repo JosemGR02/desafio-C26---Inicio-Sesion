@@ -18,19 +18,19 @@ ruta.get("/login", estaAutenticado, (solicitud, respuesta) => {
 
 ruta.post("/login", passport.authenticate("login", { failureRedirect: "/api/autenticacion/error-login" }),
     (solicitud, respuesta) => {
-        respuesta.redirect("/");
+        respuesta.redirect("/api/autenticacion");
     }
 );
 
 // Registrarse
-ruta.get("/signup", (solicitud, respuesta) => {
-    const { email } = solicitud.body;
+ruta.get("/signup", estaAutenticado, (solicitud, respuesta) => {
+    const { email } = solicitud.user;
     respuesta.render("view/home", { email });
 });
 
 ruta.post("/signup", passport.authenticate("signup", { failureRedirect: "/api/autenticacion/error-signup" }),
     (solicitud, respuesta) => {
-        respuesta.redirect("/");
+        respuesta.redirect("/api/autenticacion");
     }
 );
 
@@ -38,7 +38,7 @@ ruta.post("/signup", passport.authenticate("signup", { failureRedirect: "/api/au
 // Cerrar Sesion
 ruta.get("/logout", (solicitud, respuesta) => {
     try {
-        const { email } = solicitud.body;
+        const { email } = solicitud.user;
 
         solicitud.logout(error => {
             if (error) {
@@ -66,4 +66,3 @@ ruta.get("/error-signup", (solicitud, respuesta) => {
 
 
 export { ruta as RutAutenticacion };
-
