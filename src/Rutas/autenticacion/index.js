@@ -24,15 +24,12 @@ ruta.post("/login", passport.authenticate("login", { failureRedirect: "/api/aute
 
 // Registrarse
 ruta.get("/signup", estaAutenticado, (solicitud, respuesta) => {
-    const { email } = solicitud.user;
-    respuesta.render("view/home", { email });
+    respuesta.render("view/signup");
 });
 
-ruta.post("/signup", passport.authenticate("signup", { failureRedirect: "/api/autenticacion/error-signup" }),
-    (solicitud, respuesta) => {
-        respuesta.redirect("/api/autenticacion");
-    }
-);
+ruta.post('/signup', passport.authenticate('signup', {
+    successRedirect: '/api/autenticacion', failureRedirect: '/api/autenticacion/error-signup'
+}));
 
 
 // Cerrar Sesion
